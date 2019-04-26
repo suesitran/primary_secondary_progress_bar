@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - primary_secondary_progress_bar (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `.symlinks/flutter/ios`)
+  - primary_secondary_progress_bar (from `.symlinks/plugins/primary_secondary_progress_bar/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: ".symlinks/flutter/ios"
+  primary_secondary_progress_bar:
+    :path: ".symlinks/plugins/primary_secondary_progress_bar/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
+  primary_secondary_progress_bar: f04b551598aa0a205269583b685de3ba5d829ca9
+
+PODFILE CHECKSUM: aff02bfeed411c636180d6812254b2daeea14d09
+
+COCOAPODS: 1.6.1
