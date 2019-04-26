@@ -1,8 +1,8 @@
 name: primary_secondary_progress_bar
 description: A new flutter plugin project.
 version: 0.0.1
-author:
-homepage:
+author: Suesi Tran <suesi.tran@gmail.com>
+homepage: https://github.com/suesitran/primary_secondary_progress_bar
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
