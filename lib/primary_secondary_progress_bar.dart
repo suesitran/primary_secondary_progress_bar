@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 class PrimarySecondaryProgressBar extends StatelessWidget {
-  _PrimarySecondaryProgressBarPainter _painter;
+  final _PrimarySecondaryProgressBarPainter _painter;
 
   final sliderHeight;
   final sliderWidth;
@@ -110,7 +110,6 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
     var bottom = top + _sliderHeight;
     var fontSize = Theme.of(context).textTheme.title.fontSize;
 
-    print("Size $top $bottom $fontSize");
     var sliderRect = ui.Rect.fromLTRB(0, top, _sliderWidth, bottom);
 
     _drawSecondaryIndicator(canvas, size, sliderRect);
