@@ -1,7 +1,7 @@
 # primary_secondary_progress_bar
 Primary secondary progress bar, display 2 progress info in 1 progress bar
 
-<img src="https://github.com/suesitran/primary_secondary_progress_bar/blob/master/image/primary_secondary_example.gif" width="400">
+![Sample result](https://github.com/suesitran/primary_secondary_progress_bar/blob/master/image/primary_secondary_example.gif)
 
 ## Installation
 Add primary_secondary_progress_bar as [dependencies into your pubspec.yaml](https://flutter.dev/docs/development/packages-and-plugins/using-packages)
