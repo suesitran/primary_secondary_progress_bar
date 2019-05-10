@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+import 'dart:math' as Math;
 
 class PrimarySecondaryProgressBar extends StatelessWidget {
   final _PrimarySecondaryProgressBarPainter _painter;
@@ -138,7 +139,15 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
     canvas.drawRRect(ui.RRect.fromRectAndRadius(ui.Rect.fromLTRB(sliderRect.left, sliderRect.top, progressWidth, sliderRect.bottom), progressRadius), sliderProgress);
 
     // draw primary label => max primary
-    drawText(canvas, primaryLabel, sliderRect, primaryTextColor, ui.TextAlign.right);
+    TextPainter sliderPainter = new TextPainter(
+      text: TextSpan(text: primaryLabel, style: TextStyle(color: primaryTextColor)),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.right,
+      maxLines: 1
+    );
+    final sliderTextRect = Rect.fromLTRB(sliderRect.left + 5, sliderRect.top, sliderRect.right - 5, sliderRect.bottom);
+    sliderPainter.layout(maxWidth: sliderTextRect.width);
+    drawText(canvas, sliderTextRect, sliderPainter, textAlign: TextAlign.right);
 
     // draw expenses indicator
     final arrowWidth = indicatorWidth / 4;
@@ -148,7 +157,25 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
     var arrowLeft = arrowCenter - arrowWidth/2;
     var arrowRight = arrowCenter + arrowWidth/2;
 
-    var indicatorLeft = progressWidth - indicatorWidth / 2;
+    // calculate actual indicatorWidth base on text width, and use this indicator width to draw
+    final line1Painter = new TextPainter(
+        text: TextSpan(text: primaryIndicatorLine1,
+            style: TextStyle(fontSize: fontSize, color: primaryTextColor)),
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+        maxLines: 1)
+        ..layout(minWidth: indicatorWidth);
+    final line2Painter = new TextPainter(
+        text: TextSpan(text: primaryIndicatorLine2,
+            style: TextStyle(fontSize: fontSize * 0.6, color: primaryTextColor)),
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+        maxLines: 1)
+        ..layout(minWidth: indicatorWidth);
+
+    var actualIndicatorWidth = Math.max(line1Painter.width, line2Painter.width) + 5 /* padding left */ + 5 /* padding right*/;
+
+    var indicatorLeft = progressWidth - actualIndicatorWidth / 2;
     if(indicatorLeft <= 0) {
       // adjust bubble when bubble is overlapping left corner
       if(progressWidth < arrowWidth/2) {
@@ -159,18 +186,18 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
       }
       arrowLeft = progressWidth;
     }
-    var indicatorRight = indicatorLeft + indicatorWidth;
+    var indicatorRight = indicatorLeft + actualIndicatorWidth;
     if(indicatorRight >= size.width) {
       // adjust bubble when bubble is overlapping right conner
-      if(progressWidth + indicatorWidth >= size.width) {
+      if(progressWidth + actualIndicatorWidth >= size.width) {
         indicatorRight = progressWidth;
-        indicatorLeft = size.width - indicatorWidth;
+        indicatorLeft = size.width - actualIndicatorWidth;
         arrowRight = arrowCenter;
       } else {
         indicatorRight = size.width - arrowWidth/2;
         arrowRight = arrowCenter;
       }
-      indicatorLeft = indicatorRight - indicatorWidth;
+      indicatorLeft = indicatorRight - actualIndicatorWidth;
     }
     var indicatorBottom = sliderRect.top - indicatorArrowHeight;
     var indicatorTop = indicatorBottom - indicatorHeight;
@@ -189,21 +216,18 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
 
     // draw primary indicator string
     if (primaryIndicatorLine2 == null || primaryIndicatorLine2.isEmpty) {
-      drawText(canvas, primaryIndicatorLine1, indicatorRect, primaryTextColor, ui.TextAlign.center);
+      drawText(canvas, indicatorRect, line1Painter);
     } else {
       draw2LinesText(
           canvas,
-          primaryIndicatorLine1,
-          primaryIndicatorLine2,
           indicatorRect,
-          primaryTextColor,
-          ui.TextAlign.center,
-          fontSize);
+          line1Painter,
+          line2Painter
+      );
     }
   }
 
   void _drawSecondaryIndicator(ui.Canvas canvas, ui.Size size, ui.Rect sliderRect) {
-    final secondaryTextWidth = 120.0;
     final secondaryTextMarginTop = 10.0;
 
     ui.Paint dayIndicator = new ui.Paint()
@@ -218,98 +242,92 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
     canvas.drawLine(ui.Offset(indicatorPosition, sliderRect.top - secondaryTextMarginTop), ui.Offset(indicatorPosition, sliderRect.bottom + secondaryTextMarginTop), dayIndicator);
 
     var textAlign = ui.TextAlign.center;
+
+    final textPainter = new TextPainter(
+        text: TextSpan(
+            text: secondaryLabel,
+            style: TextStyle(color: secondaryTextColor)
+        ),
+        textDirection: TextDirection.ltr,
+        textAlign: textAlign,
+        maxLines: 1
+    );
+    textPainter.layout();
+
+    final secondaryTextWidth = textPainter.width;
+
     var textLeft = indicatorPosition - secondaryTextWidth/2;
-    if(textLeft + secondaryTextWidth/2 <= 0) {
+    if(textLeft <= 0) {
       textLeft = 0.0;
       textAlign = ui.TextAlign.start;
     }
     var textRight = textLeft + secondaryTextWidth;
-    if(textRight - secondaryTextWidth/2 >= size.width) {
+
+    if(textRight >= size.width) {
       textRight = size.width;
       textAlign = ui.TextAlign.end;
       textLeft = textRight - secondaryTextWidth;
     }
     final textTop = sliderRect.bottom + secondaryTextMarginTop;
-    final textBottom = sliderRect.bottom + 2*secondaryTextMarginTop;
+    final textBottom = textTop + textPainter.height;
 
     final textRect = ui.Rect.fromLTRB(
         textLeft,
         textTop,
         textRight,
         textBottom);
-    drawText(canvas, secondaryLabel, textRect, secondaryTextColor, textAlign);
+
+    drawText(canvas, textRect, textPainter);
   }
 
-  void drawText(ui.Canvas canvas, String text, ui.Rect boundary, Color color, ui.TextAlign textAlign) {
-    final textPainter = new Paint()..color = color;
+  /// Draw 2 lines text, to be used to draw primary text layout
+  /// Text Alignment is always Center
+  void draw2LinesText(
+      ui.Canvas canvas,
+      ui.Rect boundary,
+      TextPainter line1Painter,
+      TextPainter line2Painter) {
+    ui.Offset primaryLine = new ui.Offset(0.0, boundary.height * 0.05);
+    ui.Offset secondaryLine = new ui.Offset(0.0, boundary.height * 0.6);
 
-    final ui.Size size = boundary.size;
-
-    final paragraphStyle = new ui.ParagraphStyle(
-      textAlign: textAlign,
-    );
-    final paragraphBuilder = new ui.ParagraphBuilder(paragraphStyle)
-      ..pushStyle(new ui.TextStyle(foreground: textPainter))
-      ..addText(text);
-    final paragraph = paragraphBuilder.build();
-    paragraph.layout(new ui.ParagraphConstraints(width: size.width / 2));
-
-    var dx = 0.0;
-    var dy = 0.0;
-
-    switch (textAlign) {
-      case ui.TextAlign.center:
-        dx = size.width * 0.25;
-        dy = size.height * 0.33;
-        break;
-      case ui.TextAlign.right:
-      case ui.TextAlign.end:
-        dx = size.width * 0.48;
-        dy = size.height * 0.33;
-        break;
-      case ui.TextAlign.left:
-      case ui.TextAlign.start:
-      case ui.TextAlign.justify:
-        dx = 0.0;
-        dy = size.height * 0.33;
-        break;
-    }
-
-    ui.Offset offset = new ui.Offset(dx, dy);
-
+    // draw line 1
     canvas.save();
-    canvas.translate(boundary.left, boundary.top);
-    canvas.drawParagraph(paragraph, offset);
+    canvas.translate(boundary.left + (boundary.width - line1Painter.width)/2, boundary.top);
+    line1Painter.paint(canvas, primaryLine);
+    canvas.restore();
+
+    // draw line1
+    canvas.save();
+    canvas.translate(boundary.left + (boundary.width - line2Painter.width)/2, boundary.top);
+    line2Painter.paint(canvas, secondaryLine);
     canvas.restore();
   }
 
-  void draw2LinesText(ui.Canvas canvas, String firstLineText, String secondLineText, ui.Rect boundary, ui.Color color, ui.TextAlign textAlign, double fontSize) {
-    final textPainter = new ui.Paint()..color = color;
-
-    final ui.Size size = boundary.size;
-
-    final paragraphStyle = new ui.ParagraphStyle(
-      textAlign: textAlign,
-    );
-    final primaryParagraphBuilder = new ui.ParagraphBuilder(paragraphStyle)
-      ..pushStyle(new ui.TextStyle(foreground: textPainter, fontSize: fontSize))
-      ..addText(firstLineText);
-    final primaryParagraph = primaryParagraphBuilder.build();
-    primaryParagraph.layout(new ui.ParagraphConstraints(width: size.width));
-
-    final secondaryParagraphBuilder = new ui.ParagraphBuilder(paragraphStyle)
-      ..pushStyle(new ui.TextStyle(foreground: textPainter, fontSize: fontSize * 0.6))
-      ..addText(secondLineText);
-    final secondaryParagraph = secondaryParagraphBuilder.build();
-    secondaryParagraph.layout(new ui.ParagraphConstraints(width: size.width));
-
-    ui.Offset primaryLine = new ui.Offset(0.0, size.height * 0.05);
-    ui.Offset secondaryLine = new ui.Offset(0.0, size.height * 0.6);
+  /// Draw single line text
+  /// Text Alignment by default is center
+  void drawText(
+      ui.Canvas canvas,
+      ui.Rect boundary,
+      TextPainter painter,
+      {TextAlign textAlign = TextAlign.center}
+      ) {
+    ui.Offset offset = new ui.Offset(0.0, boundary.top + (boundary.height - painter.height)/2);
 
     canvas.save();
-    canvas.translate(boundary.left, boundary.top);
-    canvas.drawParagraph(primaryParagraph, primaryLine);
-    canvas.drawParagraph(secondaryParagraph, secondaryLine);
+    switch(textAlign) {
+      case TextAlign.center:
+        canvas.translate(boundary.left + (boundary.width - painter.width)/2, 0.0);
+        break;
+      case TextAlign.start:
+      case TextAlign.left:
+      case TextAlign.justify:
+        break;
+      case TextAlign.end:
+      case TextAlign.right:
+        canvas.translate(boundary.left + (boundary.width - painter.width), 0.0);
+        break;
+    }
+    painter.paint(canvas, offset);
     canvas.restore();
   }
 }
