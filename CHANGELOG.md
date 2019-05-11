@@ -1,3 +1,8 @@
+## 0.1.0
+
+* Release version 0.1
+* Change Label widths to accommodate all label length
+
 ## 0.0.3
 
 * Update Example Readme.md
