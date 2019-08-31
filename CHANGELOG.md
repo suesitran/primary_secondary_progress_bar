@@ -1,3 +1,7 @@
+## 0.1.1
+
+* Add Semantic label to support Talkback/voice over
+
 ## 0.1.0
 
 * Release version 0.1
