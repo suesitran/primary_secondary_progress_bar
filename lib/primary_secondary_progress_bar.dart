@@ -8,6 +8,8 @@ class PrimarySecondaryProgressBar extends StatelessWidget {
   final sliderHeight;
   final sliderWidth;
 
+  final semanticsLabel;
+
   PrimarySecondaryProgressBar(
     BuildContext context, {
     double primaryValue = 0.0,
@@ -26,6 +28,7 @@ class PrimarySecondaryProgressBar extends StatelessWidget {
     double indicatorArrowHeight = 10.0,
     double indicatorHeight = 40.0,
     double indicatorWidth = 80.0,
+    String semanticsLabel,
   }) : _painter = _PrimarySecondaryProgressBarPainter(context,
             primaryValue: primaryValue,
             primaryMax: primaryMax,
@@ -40,18 +43,22 @@ class PrimarySecondaryProgressBar extends StatelessWidget {
             activeColor: activeColor,
             indicatorArrowHeight: indicatorArrowHeight,
             indicatorHeight: indicatorHeight,
-            indicatorWidth: indicatorWidth);
+            indicatorWidth: indicatorWidth),
+        semanticsLabel = semanticsLabel == null ? "" : semanticsLabel;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-        builder: (context, constraint) => CustomPaint(
-              size: constraint.biggest,
-              painter: _painter
-                ..setSliderHeight(sliderHeight == 0.0 ? 50 : sliderHeight)
-                ..setSliderWidth(
-                    sliderWidth == 0.0 ? constraint.maxWidth : sliderWidth),
-            ));
+    return Semantics(
+      child: LayoutBuilder(
+          builder: (context, constraint) => CustomPaint(
+                size: constraint.biggest,
+                painter: _painter
+                  ..setSliderHeight(sliderHeight == 0.0 ? 50 : sliderHeight)
+                  ..setSliderWidth(
+                      sliderWidth == 0.0 ? constraint.maxWidth : sliderWidth),
+              ),),
+      label: semanticsLabel,
+    );
   }
 }
 
