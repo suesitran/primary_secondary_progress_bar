@@ -1,3 +1,7 @@
+## 0.2.0
+
+* Support NullSafety
+
 ## 0.1.1
 
 * Add Semantic label to support Talkback/voice over
