@@ -1,6 +1,6 @@
 name: primary_secondary_progress_bar
 description: Beautiful progress bar with 2 indicators as primary and secondary indicators for 2 progress values.
-version: 0.1.1
+version: 0.2.0
 author: Suesi Tran <suesi.tran@gmail.com>
 homepage: https://github.com/suesitran/primary_secondary_progress_bar
 

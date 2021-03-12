@@ -28,7 +28,7 @@ class PrimarySecondaryProgressBar extends StatelessWidget {
     double indicatorArrowHeight = 10.0,
     double indicatorHeight = 40.0,
     double indicatorWidth = 80.0,
-    String semanticsLabel,
+    String semanticsLabel = "",
   }) : _painter = _PrimarySecondaryProgressBarPainter(context,
             primaryValue: primaryValue,
             primaryMax: primaryMax,
@@ -80,30 +80,28 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
   final Color activeColor;
   final Color primaryTextColor;
   final Color secondaryTextColor;
-  final indicatorWidth;
-  final indicatorHeight;
-  final indicatorArrowHeight;
+  final double indicatorWidth;
+  final double indicatorHeight;
+  final double indicatorArrowHeight;
 
   var _sliderHeight;
   var _sliderWidth;
 
   _PrimarySecondaryProgressBarPainter(this.context,
-      {this.primaryValue,
-      this.primaryMax,
-      this.primaryLabel,
-      this.primaryIndicatorLine1,
-      this.primaryIndicatorLine2,
-      this.primaryTextColor,
-      this.secondaryValue,
-      this.secondaryMax,
-      this.secondaryLabel,
-      this.secondaryTextColor,
-      this.activeColor,
-      this.indicatorWidth,
-      this.indicatorHeight,
-      this.indicatorArrowHeight}) {
-    inactiveColor = activeColor.withOpacity(0.7);
-  }
+      {this.primaryValue = 0,
+      this.primaryMax = 0,
+      this.primaryLabel = "",
+      this.primaryIndicatorLine1 = "",
+      this.primaryIndicatorLine2 = "",
+      this.primaryTextColor = Colors.white,
+      this.secondaryValue = 0,
+      this.secondaryMax = 100,
+      this.secondaryLabel = "",
+      this.secondaryTextColor = Colors.blue,
+      this.activeColor = Colors.blue,
+      this.indicatorWidth = 40,
+      this.indicatorHeight = 50,
+      this.indicatorArrowHeight = 50}) : this.inactiveColor = activeColor.withOpacity(0.7);
 
   void setSliderHeight(double height) => this._sliderHeight = height;
   void setSliderWidth(double width) => this._sliderWidth = width;
@@ -117,7 +115,7 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
   void paint(ui.Canvas canvas, ui.Size size) {
     var top = (size.height - _sliderHeight) / 2;
     var bottom = top + _sliderHeight;
-    var fontSize = Theme.of(context).textTheme.title.fontSize;
+    var fontSize = Theme.of(context).textTheme.bodyText1?.fontSize ?? 18;
 
     var sliderRect = ui.Rect.fromLTRB(0, top, _sliderWidth, bottom);
 
