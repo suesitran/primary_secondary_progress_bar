@@ -1,3 +1,7 @@
+## 0.3.0
+
+* Opt in to Null-NullSafety
+
 ## 0.2.0
 
 * Support NullSafety

@@ -1,10 +1,10 @@
 name: primary_secondary_progress_bar
 description: Beautiful progress bar with 2 indicators as primary and secondary indicators for 2 progress values.
-version: 0.2.0
+version: 0.3.0
 homepage: https://github.com/suesitran/primary_secondary_progress_bar
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:

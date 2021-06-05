@@ -44,7 +44,7 @@ class PrimarySecondaryProgressBar extends StatelessWidget {
             indicatorArrowHeight: indicatorArrowHeight,
             indicatorHeight: indicatorHeight,
             indicatorWidth: indicatorWidth),
-        semanticsLabel = semanticsLabel == null ? "" : semanticsLabel;
+        semanticsLabel = semanticsLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +84,8 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
   final double indicatorHeight;
   final double indicatorArrowHeight;
 
-  var _sliderHeight;
-  var _sliderWidth;
+  late var _sliderHeight;
+  late var _sliderWidth;
 
   _PrimarySecondaryProgressBarPainter(this.context,
       {this.primaryValue = 0,
@@ -236,7 +236,7 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
     canvas.drawPath(path, sliderProgress);
 
     // draw primary indicator string
-    if (primaryIndicatorLine2 == null || primaryIndicatorLine2.isEmpty) {
+    if (primaryIndicatorLine2.isEmpty) {
       drawText(canvas, indicatorRect, line1Painter);
     } else {
       draw2LinesText(canvas, indicatorRect, line1Painter, line2Painter);
@@ -255,9 +255,9 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
       ..isAntiAlias = true;
 
     var daysRatio = secondaryMax > 0 ? secondaryValue / secondaryMax : 0;
-    var indicatorPosition = daysRatio * sliderRect.width;
+    num indicatorPosition = daysRatio * sliderRect.width;
     canvas.drawLine(
-        ui.Offset(indicatorPosition, sliderRect.top - secondaryTextMarginTop),
+        ui.Offset(indicatorPosition as double, sliderRect.top - secondaryTextMarginTop),
         ui.Offset(
             indicatorPosition, sliderRect.bottom + secondaryTextMarginTop),
         dayIndicator);
@@ -274,12 +274,12 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
 
     final secondaryTextWidth = textPainter.width;
 
-    var textLeft = indicatorPosition - secondaryTextWidth / 2;
+    num textLeft = indicatorPosition - secondaryTextWidth / 2;
     if (textLeft <= 0) {
       textLeft = 0.0;
       textAlign = ui.TextAlign.start;
     }
-    var textRight = textLeft + secondaryTextWidth;
+    num textRight = textLeft + secondaryTextWidth;
 
     if (textRight >= size.width) {
       textRight = size.width;
@@ -289,7 +289,7 @@ class _PrimarySecondaryProgressBarPainter extends CustomPainter {
     final textTop = sliderRect.bottom + secondaryTextMarginTop;
     final textBottom = textTop + textPainter.height;
 
-    final textRect = ui.Rect.fromLTRB(textLeft, textTop, textRight, textBottom);
+    final textRect = ui.Rect.fromLTRB(textLeft as double, textTop, textRight as double, textBottom);
 
     drawText(canvas, textRect, textPainter);
   }
