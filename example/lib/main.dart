@@ -67,14 +67,14 @@ class _PrimarySecondaryExampleState extends State<_PrimarySecondaryExample> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("Primary Value", style: Theme.of(context).textTheme.body2,),
+                  Text("Primary Value", style: Theme.of(context).textTheme.bodyText2,),
                   Slider(
                     value: _primaryValue,
                     min: 0,
                     max: _primaryMax,
                     onChanged: (value) => setState(() => _primaryValue = value),
                   ),
-                  Text("Secondary value", style: Theme.of(context).textTheme.body2,),
+                  Text("Secondary value", style: Theme.of(context).textTheme.bodyText2,),
                   Slider(
                     value: _secondaryValue,
                     min: 0.0,
@@ -87,6 +87,4 @@ class _PrimarySecondaryExampleState extends State<_PrimarySecondaryExample> {
           ],
         ));
   }
-
-  void _updateProgressBar(double primaryValue) {}
 }
